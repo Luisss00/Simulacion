@@ -78,7 +78,7 @@ def obtener_T_humanoide(nodo):
 #
 # Al multiplicar el offset local por la matriz homogénea,
 # obtenemos la posición correcta en el mundo sin importar
-# hacia dónde esté trasladandose el humanoide.
+# hacia dónde esté rotado o trasladado el humanoide.
 # ---------------------------------------------------------------
 def calcular_posicion_mano(nodo):
     T = obtener_T_humanoide(nodo)
@@ -138,6 +138,7 @@ def rotar_z(nodo, delta_angulo):
 print("=== Control de teclado ===")
 print("↑ / ↓  → Adelante / Atrás")
 print("← / →  → Izquierda / Derecha")
+print("Q / E  → Rotar antihorario / horario")
 print("La botella sigue la mano derecha automáticamente.")
 print("==========================")
 
@@ -167,7 +168,11 @@ while supervisor.step(paso_tiempo) != -1:
             print("Derecha")
             trasladar(nodo_peaton, 0.0, -TAMANO_PASO)
 
+        elif tecla == ord('Q'):
+            rotar_z(nodo_peaton, PASO_ANGULO)
 
+        elif tecla == ord('E'):
+            rotar_z(nodo_peaton, -PASO_ANGULO)
 
     # -----------------------------------------------------------
     # Actualizar posición de la botella en cada paso de tiempo.
