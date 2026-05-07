@@ -1,0 +1,12 @@
+arcial Simulación - Ronil Ibarra
+
+Cambios realizados
+
+BeerBottle
+Se agregó un nodo BeerBottle a la escena.
+
+Posición
+La botella fue colocada cerca de la mano derecha del humanoide.
+
+Movimiento
+Se modificó el controlador para que la botella siga el movimiento de la mano derecha utilizando transformaciones y sistemas de referencia.
