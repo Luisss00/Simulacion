@@ -11,8 +11,8 @@ ANGULO_STEP = math.pi / 36
 
 # --- Desplazamiento local de la botella_en_mano respecto al peatón (mano derecha) ---
 desp_x = 0.0   # adelante
-desp_y = -0.3   # lateral
-desp_z = -0.5  # altura
+desp_y = -0.25   # lateral
+desp_z = -0.7  # altura
 
 # --- Nodos del mundo ---
 nodo_peaton = supervisor.getFromDef("pedestrian1")
