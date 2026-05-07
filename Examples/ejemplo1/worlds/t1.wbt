@@ -4,12 +4,13 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/project
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/RectangleArena.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/humans/pedestrian/protos/Pedestrian.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/drinks/protos/BeerBottle.proto"
 
 WorldInfo {
 }
 Viewpoint {
-  orientation 0.01641858528259118 0.9960026202396489 -0.08780211007186561 0.3709985395849086
-  position -9.289017816791615 -0.4059419404600404 5.913363490278699
+  orientation -0.08465606819054651 -0.020237068281959033 0.9962047034550022 3.6092030959110843
+  position 4.8516714364885924 1.9793234878374464 1.9536479794672172
 }
 TexturedBackground {
 }
@@ -19,10 +20,14 @@ RectangleArena {
   floorSize 3 3
 }
 DEF pedestrian1 Pedestrian {
-  translation -0.2933345393316454 -0.9139615685832392 1.29
-  rotation 0 0 1 1.1344640137963142
+  translation -0.04877637156391171 -0.25452515196544623 1.29
+  rotation 0 0 1 0.6108652381980152
 }
 Robot {
   controller "my_controller"
   supervisor TRUE
+}
+DEF BOTELLA BeerBottle {
+  translation 0.08232195659207733 -0.4068840320962237 0.79
+  rotation 0 0 1 0.6108652381980151
 }
