@@ -1,0 +1,44 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/RectangleArena.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/humans/pedestrian/protos/Pedestrian.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/drinks/protos/BeerBottle.proto"
+
+WorldInfo {
+}
+Viewpoint {
+  orientation 0.2397719821975845 0.03410971551845157 -0.9702298304320949 2.867266255572421
+  position 9.675541220660676 3.086629495293903 5.860520833477847
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+RectangleArena {
+  translation 0.289773 0.077648 -2.5175e-07
+  rotation -3.81589e-07 -3.73857e-07 -1 -1.8326053071795858
+  floorSize 3 3
+}
+DEF BeerBottle BeerBottle {
+  translation 0.533048616641216 0.406613557834464 0.76
+  rotation -0.11622116219804991 0.8827927087056616 0.4551589556555552 0.5631186588274198
+  mass 0
+}
+DEF pedestrian1 Pedestrian {
+  translation 0.4812851099541897 0.5997988041020353 1.26
+  rotation 0 0 1 0.261797822806237
+  shirtColor 0 0 0
+  pantsColor 0.666667 0.666667 1
+  shoesColor 0 0 0
+  skinColor 1 0.666667 0.498039
+}
+Pose {
+}
+Robot {
+  translationStep 1
+  rotationStep 0
+  controller "my_controller"
+  supervisor TRUE
+}
