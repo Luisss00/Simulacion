@@ -5,114 +5,80 @@ import math
 supervisor = Supervisor()
 paso_tiempo = int(supervisor.getBasicTimeStep())
 
-# Obtener el nodo del humanoide
+# --- Parámetros de movimiento (constantes) ---
+PASO = 0.05
+ANGULO_STEP = math.pi / 36
+
+# --- Desplazamiento local de la botella_en_mano respecto al peatón (mano derecha) ---
+desp_x = 0.0   # adelante
+desp_y = -0.25   # lateral
+desp_z = -0.7  # altura
+
+# --- Nodos del mundo ---
 nodo_peaton = supervisor.getFromDef("pedestrian1")
+nodo_botella_en_mano = supervisor.getFromDef("botella_en_mano")
+
 if nodo_peaton is None:
-    print("ERROR: No se encontró el nodo con DEF del humanoide")
+    print("ERROR: No se encontró el peatón 'pedestrian1'")
+if nodo_botella_en_mano is None:
+    print("ERROR: No se encontró el botella_en_mano")
 
-# Parámetros de movimiento
-TAMANO_PASO = 0.05          # metros por paso
-PASO_ANGULO = math.pi / 36  # 5 grados por paso
-
-# Activar teclado
+# --- Teclado ---
 teclado = supervisor.getKeyboard()
 teclado.enable(paso_tiempo)
 
-# ---------------------------------------------------------------
-# Desplazamiento en X o Y del sistema de referencia del humanoide
-# ---------------------------------------------------------------
 def trasladar(nodo, dx_local, dy_local):
-    """
-    P_nueva = P_vieja + R_z(θ) * d_local
+    """Convierte desplazamiento local a mundial y mueve el nodo."""
+    pos = nodo.getField("translation").getSFVec3f()
+    angulo = nodo.getField("rotation").getSFRotation()[3]
+    cos_a = math.cos(angulo)
+    sin_a = math.sin(angulo)
+    dx_mundo = dx_local * cos_a - dy_local * sin_a
+    dy_mundo = dx_local * sin_a + dy_local * cos_a
+    nueva_pos = [pos[0] + dx_mundo, pos[1] + dy_mundo, pos[2]]
+    nodo.getField("translation").setSFVec3f(nueva_pos)
 
-    R_z(θ) = | cos θ  -sin θ  0 |   d_local = | dx_local |
-              | sin θ   cos θ  0 |              | dy_local |
-              |   0       0    1 |              |    0     |
-    """
-    # Posición actual como vector columna
-    campo_traslacion = nodo.getField("translation")
-    pos = campo_traslacion.getSFVec3f()
-    P_vieja = Matrix([pos[0], pos[1], pos[2]])
+def rotar_eje_z(nodo, delta):
+    """Rota el nodo en su eje Z el ángulo dado (radianes)."""
+    campo = nodo.getField("rotation")
+    x, y, z, angulo = campo.getSFRotation()
+    campo.setSFRotation([x, y, z, angulo + delta])
 
-    # Ángulo actual del humanoide
-    campo_rotacion = nodo.getField("rotation")
-    _, _, _, angulo = campo_rotacion.getSFRotation()
-
-    # Matriz de rotación R_z(θ)
-    R_z = Matrix([
-        [cos(angulo), -sin(angulo), 0],
-        [sin(angulo),  cos(angulo), 0],
-        [          0,            0, 1]
-    ])
-
-    # Vector de desplazamiento en sistema local
-    d_local = Matrix([dx_local, dy_local, 0])
-
-    # Rotación del vector local al sistema mundial
-    d_mundial = R_z * d_local
-
-    # Suma vectorial
-    P_nueva = P_vieja + d_mundial
-
-    # Aplicar al nodo (evaluar a float antes de enviar a Webots)
-    campo_traslacion.setSFVec3f([
-        float(P_nueva[0]),
-        float(P_nueva[1]),
-        float(P_nueva[2])
-    ])
-
-
-# ---------------------------------------------------------------
-# Rotación alrededor de Z (horario / antihorario)
-# ---------------------------------------------------------------
-def rotar_z(nodo, delta_angulo):
-    """
-    R_nueva = R_z(Δθ) * R_z(θ) = R_z(θ + Δθ)
-    """
-
-    # Formato axis-angle [0, 0, 1, θ]
-    campo_rotacion.setSFRotation([0, 0, 1, angulo + delta_angulo])
-
-
-# ---------------------------------------------------------------
-# Instrucciones en consola
-# ---------------------------------------------------------------
+# ---------- Instrucciones ----------
 print("=== Control de teclado ===")
-print("↑ / ↓  → Mover adelante / atrás    (eje X local)")
-print("← / →  → Mover izquierda / derecha (eje Y local)")
-print("Q / E  → Rotar antihorario / horario (alrededor de Z)")
+print("↑ / ↓  → Adelante / atrás")
+print("← / →  → Izquierda / derecha")
+print("Q / E  → Rotar")
 print("==========================")
 
-# ---------------------------------------------------------------
-# Bucle principal - Tiempo - Simulación
-# ---------------------------------------------------------------
 while supervisor.step(paso_tiempo) != -1:
-
     tecla = teclado.getKey()
-
-    if nodo_peaton is not None and tecla != -1:
-
-        # --- Traslación en eje X del humanoide (adelante / atrás) ---
+    if nodo_peaton and tecla != -1:
         if tecla == Keyboard.UP:
-            print("Adelante")
-            trasladar(nodo_peaton, TAMANO_PASO, 0.0)
-
+            trasladar(nodo_peaton, PASO, 0)
         elif tecla == Keyboard.DOWN:
-            print("Atras")
-            trasladar(nodo_peaton, -TAMANO_PASO, 0.0)
-
-        # --- Traslación en eje Y del humanoide (izquierda / derecha) ---
+            trasladar(nodo_peaton, -PASO, 0)
         elif tecla == Keyboard.LEFT:
-            print("Izquierda")
-            trasladar(nodo_peaton, 0.0, TAMANO_PASO)
-
+            trasladar(nodo_peaton, 0, PASO)
         elif tecla == Keyboard.RIGHT:
-            print("Derecha")
-            trasladar(nodo_peaton, 0.0, -TAMANO_PASO)
-
-        # --- Rotación alrededor de Z ---
+            trasladar(nodo_peaton, 0, -PASO)
         elif tecla == ord('Q'):
-            rotar_z(nodo_peaton, PASO_ANGULO)   # Antihorario
-
+            rotar_eje_z(nodo_peaton, ANGULO_STEP)
         elif tecla == ord('E'):
-            rotar_z(nodo_peaton, -PASO_ANGULO)  # Horario
+            rotar_eje_z(nodo_peaton, -ANGULO_STEP)
+
+    # --- Acoplar el balón al peatón (misma orientación) ---
+    if nodo_peaton and nodo_botella_en_mano:
+        pos_peaton = nodo_peaton.getField("translation").getSFVec3f()
+        angulo = nodo_peaton.getField("rotation").getSFRotation()[3]
+        cos_a = math.cos(angulo)
+        sin_a = math.sin(angulo)
+        dx_mundo = desp_x * cos_a - desp_y * sin_a
+        dy_mundo = desp_x * sin_a + desp_y * cos_a
+        pos_botella_en_mano = [
+            pos_peaton[0] + dx_mundo,
+            pos_peaton[1] + dy_mundo,
+            pos_peaton[2] + desp_z
+        ]
+        nodo_botella_en_mano.getField("translation").setSFVec3f(pos_botella_en_mano)
+        nodo_botella_en_mano.getField("rotation").setSFRotation([0, 0, 1, angulo])
